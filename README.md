@@ -1,1 +1,1 @@
-# fantasy-league.github.io
+# fantasy-league
