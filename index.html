@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Fantasy Premier League Standings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #37003c 0%, #00ff87 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #37003c;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .standings {
+            padding: 30px;
+        }
+
+        .standings h2 {
+            color: #37003c;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: #37003c;
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #fafafa;
+        }
+
+        .position {
+            font-weight: bold;
+            color: #37003c;
+            text-align: center;
+            width: 60px;
+        }
+
+        .rank-change {
+            margin-left: 5px;
+            font-size: 0.8rem;
+        }
+
+        .rank-up {
+            color: #28a745;
+        }
+
+        .rank-down {
+            color: #dc3545;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .manager-name {
+            color: #666;
+            font-style: italic;
+        }
+
+        .points {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .total-points {
+            color: #37003c;
+            font-size: 1.1rem;
+        }
+
+        .gw-points {
+            color: #37003c;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #dc3545;
+            font-size: 1.1rem;
+        }
+
+        .last-updated {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            th, td {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏆 Fantasy Premier League</h1>
+        <p>League Standings</p>
+    </div>
+
+    <div class="standings">
+        <h2>Current Standings</h2>
+        <div id="standings-content">
+            <div class="loading">Loading standings...</div>
+        </div>
+        <div class="last-updated" id="last-updated"></div>
+    </div>
+</div>
+
+<script>
+        const LEAGUE_ID = '1370073';
+        const API_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://fantasy.premierleague.com/api/leagues-classic/' + LEAGUE_ID + '/standings/')}`;
+
+        async function fetchStandings() {
+            try {
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                displayStandings(data);
+
+            } catch (error) {
+                console.error('Error fetching standings:', error);
+                document.getElementById('standings-content').innerHTML =
+                    '<div class="error">Failed to load standings. Please try again later.</div>';
+            }
+        }
+
+        function displayStandings(data) {
+            const standings = data.standings.results;
+            const leagueName = data.league ? data.league.name : 'Current Standings';
+
+            // Update the standings heading with the actual league name
+            document.querySelector('.standings h2').textContent = leagueName;
+
+            // Array of funny random logos/emojis
+            const funnyLogos = ['🤡', '🦄', '🐸', '🍕', '🚀', '🎪', '🦖', '🍌', '🎭', '🐧', '🌮', '🎮', '🦜', '🍔', '🎨', '🐨', '🌵', '🎪', '🦋', '🍩'];
+
+            let tableHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Team Name</th>
+                                <th>Manager</th>
+                                <th>GW Points</th>
+                                <th>Total Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            standings.forEach((team) => {
+                // Get a random logo for each manager
+                const randomLogo = funnyLogos[Math.floor(Math.random() * funnyLogos.length)];
+
+                // Determine rank change indicator
+                let rankChangeIcon = '';
+                if (team.last_rank) {
+                    if (team.rank < team.last_rank) {
+                        rankChangeIcon = '<span class="rank-change rank-up">↑</span>';
+                    } else if (team.rank > team.last_rank) {
+                        rankChangeIcon = '<span class="rank-change rank-down">↓</span>';
+                    } else if (team.rank === team.last_rank) {
+                        rankChangeIcon = '<span class="rank-change">↕</span>';
+                    }
+                }
+
+                tableHTML += `
+                    <tr>
+                        <td class="position">${team.rank}${rankChangeIcon}</td>
+                        <td class="team-name">${team.entry_name}</td>
+                        <td class="manager-name">${randomLogo}&nbsp;&nbsp;${team.player_name}</td>
+                        <td class="points gw-points">${team.event_total}</td>
+                        <td class="points total-points">${team.total.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById('standings-content').innerHTML = tableHTML;
+            document.getElementById('last-updated').innerHTML =
+                `Last updated: ${new Date().toLocaleString()}`;
+        }
+
+        // Load standings when page loads
+        document.addEventListener('DOMContentLoaded', fetchStandings);
+
+        // Refresh standings every 5 minutes
+        setInterval(fetchStandings, 300000);
+    </script>
+</body>
+</html>
