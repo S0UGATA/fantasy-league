@@ -160,6 +160,79 @@
             font-size: 0.9rem;
         }
 
+        .club-badge {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border-radius: 3px;
+            margin-right: 8px;
+            vertical-align: middle;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .badge-arsenal {
+            background: url('logos/clubs/arsenal.svg') center/28px no-repeat;
+        }
+        .badge-chelsea {
+            background: url('logos/clubs/chelsea.svg') center/28px no-repeat;
+        }
+        .badge-liverpool {
+            background: url('logos/clubs/liverpool.svg') center/28px no-repeat;
+        }
+        .badge-city {
+            background: url('logos/clubs/manchester-city.svg') center/28px no-repeat;
+        }
+        .badge-united {
+            background: url('logos/clubs/manchester-united.svg') center/28px no-repeat;
+        }
+        .badge-tottenham {
+            background: url('logos/clubs/tottenham.svg') center/28px no-repeat;
+        }
+        .badge-newcastle {
+            background: url('logos/clubs/newcastle.svg') center/28px no-repeat;
+        }
+        .badge-brighton {
+            background: url('logos/clubs/brighton.svg') center/28px no-repeat;
+        }
+        .badge-west-ham {
+            background: url('logos/clubs/west-ham.svg') center/28px no-repeat;
+        }
+        .badge-everton {
+            background: url('logos/clubs/everton.svg') center/28px no-repeat;
+        }
+        .badge-aston-villa {
+            background: url('logos/clubs/aston-villa.svg') center/28px no-repeat;
+        }
+        .badge-crystal-palace {
+            background: url('logos/clubs/crystal-palace.svg') center/28px no-repeat;
+        }
+        .badge-brentford {
+            background: url('logos/clubs/brentford.svg') center/28px no-repeat;
+        }
+        .badge-fulham {
+            background: url('logos/clubs/fulham.svg') center/28px no-repeat;
+        }
+        .badge-wolves {
+            background: url('logos/clubs/wolves.svg') center/28px no-repeat;
+        }
+        .badge-leicester {
+            background: url('logos/clubs/leicester.svg') center/28px no-repeat;
+        }
+        .badge-bournemouth {
+            background: url('logos/clubs/bournemouth.svg') center/28px no-repeat;
+        }
+        .badge-nottingham {
+            background: url('logos/clubs/nottingham-forest.svg') center/28px no-repeat;
+        }
+        .badge-luton {
+            background: url('logos/clubs/luton.svg') center/28px no-repeat;
+        }
+        .badge-burnley {
+            background: url('logos/clubs/burnley.svg') center/28px no-repeat;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2rem;
@@ -181,7 +254,6 @@
 <div class="container">
     <div class="header">
         <h1>🏆 Fantasy Premier League</h1>
-        <p>League Standings</p>
     </div>
 
     <div class="standings">
@@ -196,9 +268,11 @@
 <script>
         const LEAGUE_ID = '1370073';
         const API_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://fantasy.premierleague.com/api/leagues-classic/' + LEAGUE_ID + '/standings/')}`;
+        const RETRY_INTERVAL = 60000; // 1 minute
 
         async function fetchStandings() {
             try {
+                console.log('Fetching standings...');
                 const response = await fetch(API_URL);
 
                 if (!response.ok) {
@@ -206,13 +280,22 @@
                 }
 
                 const data = await response.json();
+                console.log('Successfully fetched data');
                 displayStandings(data);
 
             } catch (error) {
-                console.error('Error fetching standings:', error);
+                console.error('Fetch failed:', error.message);
                 document.getElementById('standings-content').innerHTML =
-                    '<div class="error">Failed to load standings. Please try again later.</div>';
+                    `<div class="error">Failed to load standings. Retrying in 1 minute...<br><small>${error.message}</small></div>`;
             }
+        }
+
+        function startContinuousPolling() {
+            // Schedule next fetch in 1 minute
+            setTimeout(() => {
+                fetchStandings();
+                startContinuousPolling();
+            }, RETRY_INTERVAL);
         }
 
         function displayStandings(data) {
@@ -222,8 +305,32 @@
             // Update the standings heading with the actual league name
             document.querySelector('.standings h2').textContent = leagueName;
 
-            // Array of funny random logos/emojis
-            const funnyLogos = ['🤡', '🦄', '🐸', '🍕', '🚀', '🎪', '🦖', '🍌', '🎭', '🐧', '🌮', '🎮', '🦜', '🍔', '🎨', '🐨', '🌵', '🎪', '🦋', '🍩'];
+            // Array of Premier League club badges with initials and CSS classes
+            const clubBadges = [
+                { initials: 'ARS', class: 'badge-arsenal' },
+                { initials: 'CHE', class: 'badge-chelsea' },
+                { initials: 'LIV', class: 'badge-liverpool' },
+                { initials: 'MCI', class: 'badge-city' },
+                { initials: 'MUN', class: 'badge-united' },
+                { initials: 'TOT', class: 'badge-tottenham' },
+                { initials: 'NEW', class: 'badge-newcastle' },
+                { initials: 'BHA', class: 'badge-brighton' },
+                { initials: 'WHU', class: 'badge-west-ham' },
+                { initials: 'EVE', class: 'badge-everton' },
+                { initials: 'AVL', class: 'badge-aston-villa' },
+                { initials: 'CRY', class: 'badge-crystal-palace' },
+                { initials: 'BRE', class: 'badge-brentford' },
+                { initials: 'FUL', class: 'badge-fulham' },
+                { initials: 'WOL', class: 'badge-wolves' },
+                { initials: 'LEI', class: 'badge-leicester' },
+                { initials: 'BOU', class: 'badge-bournemouth' },
+                { initials: 'NFO', class: 'badge-nottingham' },
+                { initials: 'LUT', class: 'badge-luton' },
+                { initials: 'BUR', class: 'badge-burnley' }
+            ];
+
+            // Shuffle the badges array to get unique assignments
+            const shuffledBadges = [...clubBadges].sort(() => 0.5 - Math.random());
 
             let tableHTML = `
                 <div class="table-container">
@@ -240,9 +347,10 @@
                         <tbody>
             `;
 
-            standings.forEach((team) => {
-                // Get a random logo for each manager
-                const randomLogo = funnyLogos[Math.floor(Math.random() * funnyLogos.length)];
+            standings.forEach((team, index) => {
+                // Get a unique badge for each manager (cycle through if more teams than badges)
+                const badgeIndex = index % shuffledBadges.length;
+                const assignedBadge = shuffledBadges[badgeIndex];
 
                 // Determine rank change indicator
                 let rankChangeIcon = '';
@@ -260,7 +368,10 @@
                     <tr>
                         <td class="position">${team.rank}${rankChangeIcon}</td>
                         <td class="team-name">${team.entry_name}</td>
-                        <td class="manager-name">${randomLogo}&nbsp;&nbsp;${team.player_name}</td>
+                        <td class="manager-name">
+                            <span class="club-badge ${assignedBadge.class}">${assignedBadge.initials}</span>
+                            ${team.player_name}
+                        </td>
                         <td class="points gw-points">${team.event_total}</td>
                         <td class="points total-points">${team.total.toLocaleString()}</td>
                     </tr>
@@ -279,10 +390,10 @@
         }
 
         // Load standings when page loads
-        document.addEventListener('DOMContentLoaded', fetchStandings);
-
-        // Refresh standings every 5 minutes
-        setInterval(fetchStandings, 300000);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchStandings(); // Initial immediate load
+            startContinuousPolling(); // Start continuous polling
+        });
     </script>
 </body>
 </html>
