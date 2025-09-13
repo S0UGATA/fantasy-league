@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fantasy Premier League Standings</title>
     <style>
         * {
@@ -15,7 +15,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #37003c 0%, #00ff87 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 18px;
         }
 
         .container {
@@ -30,13 +30,11 @@
         .header {
             background: #37003c;
             color: white;
-            padding: 5px;
-            text-align: center;
-            position: relative;
+            padding: 4.5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 13.5px;
         }
 
         .fpl-logo {
@@ -49,27 +47,21 @@
             width: 96px;
             height: 96px;
             object-fit: contain;
-            margin-left: 10px;
+            margin-left: 9px;
         }
 
         .header h1 {
             font-size: 2.5rem;
-            margin-bottom: 5px;
             font-weight: 700;
         }
 
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
         .standings {
-            padding: 20px;
+            padding: 18px;
         }
 
         .standings h2 {
             color: #37003c;
-            margin-bottom: 15px;
+            margin-bottom: 13.5px;
             font-size: 1.8rem;
             text-align: center;
         }
@@ -89,19 +81,15 @@
         th {
             background: #37003c;
             color: white;
-            padding: 15px 12px;
+            padding: 12.15px 10.8px;
             text-align: left;
             font-weight: 600;
             font-size: 0.95rem;
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
         td {
-            padding: 15px 12px;
+            padding: 12.15px 10.8px;
             border-bottom: 1px solid #eee;
-            transition: background-color 0.3s ease;
         }
 
         tr:hover td {
@@ -120,17 +108,12 @@
         }
 
         .rank-change {
-            margin-left: 5px;
+            margin-left: 4.5px;
             font-size: 0.8rem;
         }
 
-        .rank-up {
-            color: #28a745;
-        }
-
-        .rank-down {
-            color: #dc3545;
-        }
+        .rank-up { color: #28a745; }
+        .rank-down { color: #dc3545; }
 
         .team-name {
             font-weight: 600;
@@ -156,23 +139,19 @@
             color: #37003c;
         }
 
-        .loading {
+        .loading, .error {
             text-align: center;
-            padding: 50px;
-            color: #666;
+            padding: 45px;
             font-size: 1.1rem;
         }
 
         .error {
-            text-align: center;
-            padding: 50px;
             color: #dc3545;
-            font-size: 1.1rem;
         }
 
         .last-updated {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 18px;
             color: #666;
             font-size: 0.9rem;
         }
@@ -182,173 +161,158 @@
             width: 32px;
             height: 32px;
             border-radius: 3px;
-            margin-right: 8px;
+            margin-right: 7.2px;
             vertical-align: middle;
-            background-size: contain;
+            background-size: 28px;
             background-repeat: no-repeat;
             background-position: center;
         }
 
-        .badge-arsenal {
-            background: url('logos/clubs/arsenal.svg') center/28px no-repeat;
-        }
-        .badge-chelsea {
-            background: url('logos/clubs/chelsea.svg') center/28px no-repeat;
-        }
-        .badge-liverpool {
-            background: url('logos/clubs/liverpool.svg') center/28px no-repeat;
-        }
-        .badge-city {
-            background: url('logos/clubs/manchester-city.svg') center/28px no-repeat;
-        }
-        .badge-united {
-            background: url('logos/clubs/manchester-united.svg') center/28px no-repeat;
-        }
-        .badge-tottenham {
-            background: url('logos/clubs/tottenham.svg') center/28px no-repeat;
-        }
-        .badge-newcastle {
-            background: url('logos/clubs/newcastle.svg') center/28px no-repeat;
-        }
-        .badge-brighton {
-            background: url('logos/clubs/brighton.svg') center/28px no-repeat;
-        }
-        .badge-west-ham {
-            background: url('logos/clubs/west-ham.svg') center/28px no-repeat;
-        }
-        .badge-everton {
-            background: url('logos/clubs/everton.svg') center/28px no-repeat;
-        }
-        .badge-aston-villa {
-            background: url('logos/clubs/aston-villa.svg') center/28px no-repeat;
-        }
-        .badge-crystal-palace {
-            background: url('logos/clubs/crystal-palace.svg') center/28px no-repeat;
-        }
-        .badge-brentford {
-            background: url('logos/clubs/brentford.svg') center/28px no-repeat;
-        }
-        .badge-fulham {
-            background: url('logos/clubs/fulham.svg') center/28px no-repeat;
-        }
-        .badge-wolves {
-            background: url('logos/clubs/wolves.svg') center/28px no-repeat;
-        }
-        .badge-leicester {
-            background: url('logos/clubs/leicester.svg') center/28px no-repeat;
-        }
-        .badge-bournemouth {
-            background: url('logos/clubs/bournemouth.svg') center/28px no-repeat;
-        }
-        .badge-nottingham {
-            background: url('logos/clubs/nottingham-forest.svg') center/28px no-repeat;
-        }
-        .badge-luton {
-            background: url('logos/clubs/luton.svg') center/28px no-repeat;
-        }
-        .badge-burnley {
-            background: url('logos/clubs/burnley.svg') center/28px no-repeat;
-        }
+        .badge-arsenal { background-image: url('logos/clubs/arsenal.svg'); }
+        .badge-chelsea { background-image: url('logos/clubs/chelsea.svg'); }
+        .badge-liverpool { background-image: url('logos/clubs/liverpool.svg'); }
+        .badge-city { background-image: url('logos/clubs/manchester-city.svg'); }
+        .badge-united { background-image: url('logos/clubs/manchester-united.svg'); }
+        .badge-tottenham { background-image: url('logos/clubs/tottenham.svg'); }
+        .badge-newcastle { background-image: url('logos/clubs/newcastle.svg'); }
+        .badge-brighton { background-image: url('logos/clubs/brighton.svg'); }
+        .badge-west-ham { background-image: url('logos/clubs/west-ham.svg'); }
+        .badge-everton { background-image: url('logos/clubs/everton.svg'); }
+        .badge-aston-villa { background-image: url('logos/clubs/aston-villa.svg'); }
+        .badge-crystal-palace { background-image: url('logos/clubs/crystal-palace.svg'); }
+        .badge-brentford { background-image: url('logos/clubs/brentford.svg'); }
+        .badge-fulham { background-image: url('logos/clubs/fulham.svg'); }
+        .badge-wolves { background-image: url('logos/clubs/wolves.svg'); }
+        .badge-leicester { background-image: url('logos/clubs/leicester.svg'); }
+        .badge-bournemouth { background-image: url('logos/clubs/bournemouth.svg'); }
+        .badge-nottingham { background-image: url('logos/clubs/nottingham-forest.svg'); }
+        .badge-luton { background-image: url('logos/clubs/luton.svg'); }
+        .badge-burnley { background-image: url('logos/clubs/burnley.svg'); }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
+            body { padding: 10px; }
+            .header {
+                flex-direction: column;
+                padding: 15px 10px;
+                gap: 10px;
             }
-
-            th, td {
-                padding: 10px 8px;
-                font-size: 0.9rem;
+            .fpl-logo { width: 80px; height: 80px; }
+            .storebrand-logo {
+                width: 60px;
+                height: 60px;
+                margin-left: 0;
+                margin-top: 5px;
             }
+            .header h1 { font-size: 1.5rem; }
+            .standings { padding: 10px; }
+            .standings h2 { font-size: 1.4rem; margin-bottom: 10px; }
+            th, td { padding: 8px 4px; font-size: 0.75rem; }
+            th {
+                white-space: normal;
+                word-wrap: break-word;
+                line-height: 1.2;
+                padding: 6px 2px;
+                text-align: center;
+            }
+            .club-badge {
+                display: none;
+            }
+            .position { width: 40px; }
+            .team-name {
+                max-width: none;
+                overflow: visible;
+                text-overflow: clip;
+                white-space: normal;
+            }
+            .manager-name {
+                max-width: none;
+                overflow: visible;
+                text-overflow: clip;
+                white-space: normal;
+            }
+            .last-updated { font-size: 0.8rem; margin-top: 10px; padding: 0 5px; }
+        }
 
-            .container {
-                margin: 10px;
-                border-radius: 8px;
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.2rem; }
+            .fpl-logo { width: 60px; height: 60px; }
+            .storebrand-logo { width: 45px; height: 45px; }
+            .standings h2 { font-size: 1.2rem; }
+            th, td { padding: 6px 2px; font-size: 0.7rem; }
+            th {
+                white-space: normal;
+                word-wrap: break-word;
+                line-height: 1.1;
+                padding: 4px 1px;
+                text-align: center;
+            }
+            .team-name {
+                max-width: none;
+                overflow: visible;
+                text-overflow: clip;
+                white-space: normal;
+            }
+            .manager-name {
+                max-width: none;
+                overflow: visible;
+                text-overflow: clip;
+                white-space: normal;
+            }
+            .club-badge {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <img src="logos/fantasyLeague.png" alt="FPL Logo" class="fpl-logo">
-        <h1>Fantasy Premier League</h1>
-        <img src="logos/storebrand.svg" alt="Storebrand Logo" class="storebrand-logo">
-    </div>
-
-    <div class="standings">
-        <h2>Current Standings</h2>
-        <div id="standings-content">
-            <div class="loading">Loading standings...</div>
+    <div class="container">
+        <div class="header">
+            <img src="logos/fantasyLeague.png" alt="FPL Logo" class="fpl-logo">
+            <h1>Fantasy Premier League</h1>
+            <img src="logos/storebrand.svg" alt="Storebrand Logo" class="storebrand-logo">
         </div>
-        <div class="last-updated" id="last-updated"></div>
-    </div>
-</div>
 
-<script>
+        <div class="standings">
+            <h2>Current Standings</h2>
+            <div id="standings-content">
+                <div class="loading">Loading standings...</div>
+            </div>
+            <div class="last-updated" id="last-updated"></div>
+        </div>
+    </div>
+
+    <script>
         const LEAGUE_ID = '1370073';
         const API_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://fantasy.premierleague.com/api/leagues-classic/' + LEAGUE_ID + '/standings/')}`;
-        const RETRY_INTERVAL = 60000; // 1 minute
+        const RETRY_INTERVAL = 60000;
 
         async function fetchStandings() {
             try {
-                console.log('Fetching standings...');
                 const response = await fetch(API_URL);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
-                console.log('Successfully fetched data');
                 displayStandings(data);
-
             } catch (error) {
-                console.error('Fetch failed:', error.message);
                 document.getElementById('standings-content').innerHTML =
                     `<div class="error">Failed to load standings. Retrying in 1 minute...<br><small>${error.message}</small></div>`;
             }
         }
 
-        function startContinuousPolling() {
-            // Schedule next fetch in 1 minute
-            setTimeout(() => {
-                fetchStandings();
-                startContinuousPolling();
-            }, RETRY_INTERVAL);
-        }
-
         function displayStandings(data) {
             const standings = data.standings.results;
             const leagueName = data.league ? data.league.name : 'Current Standings';
-
-            // Update the standings heading with the actual league name
             document.querySelector('.standings h2').textContent = leagueName;
 
-            // Array of Premier League club badges with initials and CSS classes
             const clubBadges = [
-                { initials: 'ARS', class: 'badge-arsenal' },
-                { initials: 'CHE', class: 'badge-chelsea' },
-                { initials: 'LIV', class: 'badge-liverpool' },
-                { initials: 'MCI', class: 'badge-city' },
-                { initials: 'MUN', class: 'badge-united' },
-                { initials: 'TOT', class: 'badge-tottenham' },
-                { initials: 'NEW', class: 'badge-newcastle' },
-                { initials: 'BHA', class: 'badge-brighton' },
-                { initials: 'WHU', class: 'badge-west-ham' },
-                { initials: 'EVE', class: 'badge-everton' },
-                { initials: 'AVL', class: 'badge-aston-villa' },
-                { initials: 'CRY', class: 'badge-crystal-palace' },
-                { initials: 'BRE', class: 'badge-brentford' },
-                { initials: 'FUL', class: 'badge-fulham' },
-                { initials: 'WOL', class: 'badge-wolves' },
-                { initials: 'LEI', class: 'badge-leicester' },
-                { initials: 'BOU', class: 'badge-bournemouth' },
-                { initials: 'NFO', class: 'badge-nottingham' },
-                { initials: 'LUT', class: 'badge-luton' },
-                { initials: 'BUR', class: 'badge-burnley' }
+                { class: 'badge-arsenal' }, { class: 'badge-chelsea' }, { class: 'badge-liverpool' },
+                { class: 'badge-city' }, { class: 'badge-united' }, { class: 'badge-tottenham' },
+                { class: 'badge-newcastle' }, { class: 'badge-brighton' }, { class: 'badge-west-ham' },
+                { class: 'badge-everton' }, { class: 'badge-aston-villa' }, { class: 'badge-crystal-palace' },
+                { class: 'badge-brentford' }, { class: 'badge-fulham' }, { class: 'badge-wolves' },
+                { class: 'badge-leicester' }, { class: 'badge-bournemouth' }, { class: 'badge-nottingham' },
+                { class: 'badge-luton' }, { class: 'badge-burnley' }
             ];
 
-            // Shuffle the badges array to get unique assignments
             const shuffledBadges = [...clubBadges].sort(() => 0.5 - Math.random());
 
             let tableHTML = `
@@ -363,15 +327,12 @@
                                 <th>Total Points</th>
                             </tr>
                         </thead>
-                        <tbody>
-            `;
+                        <tbody>`;
 
             standings.forEach((team, index) => {
-                // Get a unique badge for each manager (cycle through if more teams than badges)
                 const badgeIndex = index % shuffledBadges.length;
                 const assignedBadge = shuffledBadges[badgeIndex];
 
-                // Determine rank change indicator
                 let rankChangeIcon = '';
                 if (team.last_rank) {
                     if (team.rank < team.last_rank) {
@@ -393,25 +354,24 @@
                         </td>
                         <td class="points gw-points">${team.event_total}</td>
                         <td class="points total-points">${team.total.toLocaleString()}</td>
-                    </tr>
-                `;
+                    </tr>`;
             });
 
-            tableHTML += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
+            tableHTML += `</tbody></table></div>`;
             document.getElementById('standings-content').innerHTML = tableHTML;
-            document.getElementById('last-updated').innerHTML =
-                `Last updated: ${new Date().toLocaleString()}`;
+            document.getElementById('last-updated').innerHTML = `Last updated: ${new Date().toLocaleString()}`;
         }
 
-        // Load standings when page loads
+        function startContinuousPolling() {
+            setTimeout(() => {
+                fetchStandings();
+                startContinuousPolling();
+            }, RETRY_INTERVAL);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            fetchStandings(); // Initial immediate load
-            startContinuousPolling(); // Start continuous polling
+            fetchStandings();
+            startContinuousPolling();
         });
     </script>
 </body>
