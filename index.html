@@ -105,16 +105,26 @@
             color: #37003c;
             text-align: center;
             width: 60px;
+            position: relative;
+            font-variant-numeric: tabular-nums;
         }
 
         .rank-change {
-            margin-left: 4.5px;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: bold;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            width: 20px;
+            text-align: center;
         }
 
-        .rank-up { color: #28a745; }
-        .rank-down { color: #dc3545; }
+        .rank-number {
+            display: inline-block;
+            width: 24px;
+            text-align: right;
+            vertical-align: middle;
+        }
 
         .team-name {
             font-weight: 600;
@@ -189,6 +199,44 @@
         .badge-nottingham { background-image: url('logos/clubs/nottingham-forest.svg'); }
         .badge-luton { background-image: url('logos/clubs/luton.svg'); }
         .badge-burnley { background-image: url('logos/clubs/burnley.svg'); }
+
+        .rank-up {
+            color: #28a745;
+            animation: upColorWave 2s ease-in-out infinite;
+            background: linear-gradient(to top, #28a745, #4ade80, #28a745);
+            background-size: 100% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .rank-down {
+            color: #dc3545;
+            animation: downColorWave 2s ease-in-out infinite;
+            background: linear-gradient(to bottom, #dc3545, #f87171, #dc3545);
+            background-size: 100% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes upColorWave {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 0% 100%;
+            }
+        }
+
+        @keyframes downColorWave {
+            0% {
+                background-position: 0% 100%;
+            }
+            100% {
+                background-position: 0% 0%;
+            }
+        }
 
         @media (max-width: 768px) {
             body { padding: 10px; }
@@ -343,11 +391,15 @@
                     } else if (team.rank === team.last_rank) {
                         rankChangeIcon = '<span class="rank-change">↕</span>';
                     }
+                } else {
+                    // Temporary test - add random arrows to see animations
+                    const testArrows = ['<span class="rank-change rank-up">↑</span>', '<span class="rank-change rank-down">↓</span>', '<span class="rank-change">↕</span>'];
+                    rankChangeIcon = testArrows[index % 3];
                 }
 
                 tableHTML += `
                     <tr>
-                        <td class="position">${team.rank}${rankChangeIcon}</td>
+                        <td class="position">${rankChangeIcon}<span class="rank-number">${team.rank}</span></td>
                         <td class="team-name">
                             <span class="club-badge ${assignedBadge.class}"></span>
                             ${team.entry_name}
