@@ -347,11 +347,11 @@
                 tableHTML += `
                     <tr>
                         <td class="position">${team.rank}${rankChangeIcon}</td>
-                        <td class="team-name">${team.entry_name}</td>
-                        <td class="manager-name">
+                        <td class="team-name">
                             <span class="club-badge ${assignedBadge.class}"></span>
-                            ${team.player_name}
+                            ${team.entry_name}
                         </td>
+                        <td class="manager-name">${team.player_name}</td>
                         <td class="points gw-points">${team.event_total}</td>
                         <td class="points total-points">${team.total.toLocaleString()}</td>
                     </tr>`;
