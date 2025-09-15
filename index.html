@@ -379,9 +379,6 @@
                         <tbody>`;
 
             standings.forEach((team, index) => {
-                const badgeIndex = index % shuffledBadges.length;
-                const assignedBadge = shuffledBadges[badgeIndex];
-
                 let rankChangeIcon = '';
                 if (team.last_rank) {
                     if (team.rank < team.last_rank) {
@@ -401,7 +398,6 @@
                     <tr>
                         <td class="position">${rankChangeIcon}<span class="rank-number">${team.rank}</span></td>
                         <td class="team-name">
-                            <span class="club-badge ${assignedBadge.class}"></span>
                             ${team.entry_name}
                         </td>
                         <td class="manager-name">${team.player_name}</td>
