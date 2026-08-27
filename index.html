@@ -332,37 +332,66 @@
 
     <script>
         const LEAGUE_ID = '318710';
-        const API_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://fantasy.premierleague.com/api/leagues-classic/' + LEAGUE_ID + '/standings/')}`;
+        const FPL_URL = `https://fantasy.premierleague.com/api/leagues-classic/${LEAGUE_ID}/standings/`;
         const RETRY_INTERVAL = 60000;
 
-        async function fetchStandings() {
-            try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
-                displayStandings(data);
-            } catch (error) {
-                document.getElementById('standings-content').innerHTML =
-                    `<div class="error">Failed to load standings. Retrying in 1 minute...<br><small>${error.message}</small></div>`;
+        // The FPL API sends no CORS headers, so the browser cannot call it directly.
+        // These public proxies are tried in order; each one is independently flaky
+        // (FPL sits behind Cloudflare, which intermittently 5xx's datacenter IPs),
+        // so the first proxy returning a well-formed payload wins.
+        const PROXIES = [
+            {
+                name: 'r.jina.ai',
+                url: () => `https://r.jina.ai/${FPL_URL}`,
+                init: { headers: { 'x-respond-with': 'text' } }
+            },
+            {
+                name: 'allorigins',
+                url: () => `https://api.allorigins.win/raw?url=${encodeURIComponent(FPL_URL)}`
+            },
+            {
+                name: 'codetabs',
+                url: () => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(FPL_URL)}`
             }
+        ];
+
+        async function fetchViaProxy(proxy) {
+            const response = await fetch(proxy.url(), proxy.init || {});
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            // Proxies signal upstream failure with a 200 + an HTML/plain-text error
+            // body, so parse defensively rather than trusting response.json().
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                throw new Error(`non-JSON response (${text.slice(0, 40)})`);
+            }
+            if (!data || !data.standings || !Array.isArray(data.standings.results)) {
+                throw new Error('unexpected payload shape');
+            }
+            return data;
+        }
+
+        async function fetchStandings() {
+            const failures = [];
+            for (const proxy of PROXIES) {
+                try {
+                    displayStandings(await fetchViaProxy(proxy));
+                    return;
+                } catch (error) {
+                    failures.push(`${proxy.name}: ${error.message}`);
+                }
+            }
+            document.getElementById('standings-content').innerHTML =
+                `<div class="error">Failed to load standings. Retrying in 1 minute...<br><small>${failures.join('<br>')}</small></div>`;
         }
 
         function displayStandings(data) {
             const standings = data.standings.results;
             const leagueName = data.league ? data.league.name : 'Current Standings';
             document.querySelector('.standings h2').textContent = leagueName;
-
-            const clubBadges = [
-                { class: 'badge-arsenal' }, { class: 'badge-chelsea' }, { class: 'badge-liverpool' },
-                { class: 'badge-city' }, { class: 'badge-united' }, { class: 'badge-tottenham' },
-                { class: 'badge-newcastle' }, { class: 'badge-brighton' }, { class: 'badge-west-ham' },
-                { class: 'badge-everton' }, { class: 'badge-aston-villa' }, { class: 'badge-crystal-palace' },
-                { class: 'badge-brentford' }, { class: 'badge-fulham' }, { class: 'badge-wolves' },
-                { class: 'badge-leicester' }, { class: 'badge-bournemouth' }, { class: 'badge-nottingham' },
-                { class: 'badge-luton' }, { class: 'badge-burnley' }
-            ];
-
-            const shuffledBadges = [...clubBadges].sort(() => 0.5 - Math.random());
 
             let tableHTML = `
                 <div class="table-container">
@@ -378,20 +407,19 @@
                         </thead>
                         <tbody>`;
 
-            standings.forEach((team, index) => {
-                let rankChangeIcon = '';
-                if (team.last_rank) {
+            standings.forEach((team) => {
+                // last_rank is 0 before the first gameweek has been ranked; there is
+                // no movement to report yet, so render an empty spacer to keep the
+                // rank numbers aligned with the rows that do show an arrow.
+                let rankChangeIcon = '<span class="rank-change"></span>';
+                if (team.last_rank > 0) {
                     if (team.rank < team.last_rank) {
                         rankChangeIcon = '<span class="rank-change rank-up">↑</span>';
                     } else if (team.rank > team.last_rank) {
                         rankChangeIcon = '<span class="rank-change rank-down">↓</span>';
-                    } else if (team.rank === team.last_rank) {
+                    } else {
                         rankChangeIcon = '<span class="rank-change">↕</span>';
                     }
-                } else {
-                    // Temporary test - add random arrows to see animations
-                    const testArrows = ['<span class="rank-change rank-up">↑</span>', '<span class="rank-change rank-down">↓</span>', '<span class="rank-change">↕</span>'];
-                    rankChangeIcon = testArrows[index % 3];
                 }
 
                 tableHTML += `
